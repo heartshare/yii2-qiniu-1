@@ -1,0 +1,22 @@
+{
+    "name": "sillydong/yii2-qiniu",
+    "description": "simple way to use qiniu",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","qiniu"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Chen.Zhidong",
+            "email": "njutczd@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "qiniu/php-sdk": "v7.0.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "sillydong\\qiniu\\": ""
+        }
+    }
+}
