@@ -12,10 +12,10 @@ use Qiniu\Storage\UploadManager;
  * Time: 22:58
  */
 class Qiniu extends \yii\base\Component{
-    
+
     const EVENT_BEFORE_UPLOAD = "beforeUpload";
     const EVENT_AFTER_UPLOAD = "afterUpload";
-    
+
     protected $url;
     protected $bucket;
     protected $ak;
@@ -26,7 +26,7 @@ class Qiniu extends \yii\base\Component{
         'returnBody' => '{"name": $(fname),"size": $(fsize),"w": $(imageInfo.width),"h": $(imageInfo.height),"hash": $(etag)}'
     );
 
-    function __construct($bucket, $url, $ak, $sk,$config=[]) {
+    function __construct($bucket, $url, $ak, $sk, $config = []) {
         $this->url = $url;
         $this->bucket = $bucket;
         $this->ak = $ak;
@@ -37,44 +37,51 @@ class Qiniu extends \yii\base\Component{
 
         parent::__construct($config);
     }
-    
-    public function beforeUpload($filedata=[]){
+
+    protected function beforeUpload($filedata = []) {
         $event = new UploadEvent();
         $event->filedata = $filedata;
-        $this->trigger(self::EVENT_BEFORE_UPLOAD,$event);
-        
+        $this->trigger(self::EVENT_BEFORE_UPLOAD, $event);
+
         return $event->continue;
     }
-    
-    public function afterUpload($resultdata=[]){
+
+    protected function afterUpload($resultdata = []) {
         $event = new UploadEvent();
-        $event->resultdata=$resultdata;
-        
-        $this->trigger(self::EVENT_AFTER_UPLOAD,$event);
+        $event->resultdata = $resultdata;
+
+        $this->trigger(self::EVENT_AFTER_UPLOAD, $event);
     }
 
     public function upload($filename, $data, $mimetype) {
-        if($this->beforeUpload(func_get_args())){
+        if ($this->beforeUpload(func_get_args()))
+        {
             $token = $this->auth->uploadToken($this->bucket, null, 3600, $this->policy);
 
-            $result=$this->uploadmgr->put($token, $filename, $data, null, $mimetype);
+            $result = $this->uploadmgr->put($token, $filename, $data, null, $mimetype);
         }
-        else{
-            $result=[];
+        else
+        {
+            $result = [];
         }
         $this->afterUpload($result);
+
         return $result;
     }
 
     public function uploadFile($filename, $path, $mimetype) {
-        if($this->beforeUpload(func_get_args())){
+        if ($this->beforeUpload(func_get_args()))
+        {
             $token = $this->auth->uploadToken($this->bucket, null, 3600, $this->policy);
 
-            $result=$this->uploadmgr->putFile($token, $filename, $path, null, $mimetype);
-        }else{
-            $result=[];
+            $result = $this->uploadmgr->putFile($token, $filename, $path, null, $mimetype);
+        }
+        else
+        {
+            $result = [];
         }
         $this->afterUpload($result);
+
         return $result;
     }
 }
